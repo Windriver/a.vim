@@ -419,6 +419,25 @@ function! DetermineExtension(path)
   return ""
 endfunction
 
+function! AlternateFileUT(splitWindow, ...)
+  let extension   = DetermineExtension(expand("%:p"))
+  let baseName    = substitute(expand("%:t"), "\." . extension . '$', "", "")
+  let currentPath = expand("%:p:h")
+
+  let targetFile = ""
+  if baseName =~# '\v^.+_test$'
+    let targetFile = substitute(baseName, "_test$", "", "")
+    let targetFile .= ".h"
+    echo targetFile
+  else
+    let targetFile = currentPath . "/" . baseName . "_test.cpp"
+  endif
+
+  " Open it
+  call <SID>FindOrCreateBuffer(targetFile, a:splitWindow, 1)
+
+endfunction
+
 " Function : AlternateFile (PUBLIC)
 " Purpose  : Opens a new buffer by looking at the extension of the current
 "            buffer and finding the corresponding file. E.g. foo.c <--> foo.h
@@ -634,6 +653,7 @@ comm! -nargs=? -bang AS call AlternateFile("h<bang>", <f-args>)
 comm! -nargs=? -bang AV call AlternateFile("v<bang>", <f-args>)
 comm! -nargs=? -bang AT call AlternateFile("t<bang>", <f-args>)
 comm! -nargs=? -bang AN call NextAlternate("<bang>")
+comm! -nargs=? -bang AUT call AlternateFileUT("n<bang>", <f-args>)
 
 " Function : BufferOrFileExists (PRIVATE)
 " Purpose  : determines if a buffer or a readable file exists
