@@ -424,6 +424,7 @@ function! AlternateFileUT(splitWindow, ...)
   let baseName    = substitute(expand("%:t"), "\." . extension . '$', "", "")
   let currentPath = expand("%:p:h")
 
+
   let targetFile = ""
   if baseName =~# '\v^.+_test$'
     let targetFile = substitute(baseName, "_test$", "", "")
